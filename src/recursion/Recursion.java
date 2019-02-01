@@ -110,8 +110,9 @@ public class Recursion {
     }
 
     public static void main(String... args) {
-        System.out.println(betterFib(9000));
-        System.out.println(loopFib(21000));
-        System.out.println(makeAllSums(10));
+        System.out.println(fib(92));
+//        System.out.println(betterFib(9000));
+//        System.out.println(loopFib(21000));
+//        System.out.println(makeAllSums(10));
     }
 }
