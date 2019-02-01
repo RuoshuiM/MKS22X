@@ -38,14 +38,16 @@ public class Recursion {
         else
             return fib(n, cur + 1, n2, n1 + n2);
     }
-    
+
     /**
-     * Works up to about n = 9840. (Depends on computer, I think) Stack overflow after that.
-     * This can probably be better if a loop is used. Then the digits can be much much larger.
+     * Works up to about n = 9840. (Depends on computer, I think) Stack overflow
+     * after that. This can probably be better if a loop is used. Then the digits
+     * can be much much larger.
+     * 
      * @param n the number in the fibbonaci sequence
      * @return the n'th fibbonaci number
      */
-    public static BigInteger betterFib(long n) {
+    public static BigInteger betterFib(int n) {
         if (n < 0)
             throw new IllegalArgumentException("n must be non-negative");
         BigInteger f0 = BigInteger.ZERO;
@@ -53,18 +55,22 @@ public class Recursion {
         return fib(n, 0, f0, f1);
     }
 
-    private static BigInteger fib(long n, long cur, BigInteger n1, BigInteger n2) {
+    private static BigInteger fib(int n, int cur, BigInteger n1, BigInteger n2) {
         if (cur == n)
             return n1;
         else
             return fib(n, cur + 1, n2, n1.add(n2));
     }
-    
+
     /**
-     * Let's see how much better we can do with loops
-     * @param n
+     * Let's see how much better we can do with loops. Seems like for n > 21000, the
+     * BigInteger can't be printed out. There is no practical limit otherwise (even
+     * when n = Integer.MAX_VALUE, no error occurs)
+     * 
+     * @param n the number in the fibbonaci sequence
+     * @return the n'th fibbonaci number
      */
-    public static BigInteger loopFib(long n) {
+    public static BigInteger loopFib(int n) {
         if (n < 0)
             throw new IllegalArgumentException("n must be non-negative");
         BigInteger f0 = BigInteger.ZERO;
