@@ -3,7 +3,7 @@ Includes methods to:
 
   * [calculate fibbonaci number](#fib)
   * [make Sums](#makeallsums)
-  * For recursive square root, see [Class: RecursiveSqrt](#class:-recursivesqrt)
+  * For recursive square root, see [Class: RecursiveSqrt](#class-recursivesqrt)
   
 ## fib
 The default method only works for n < 93. After that, the output overflows a long. The method computes fib recursively by working from 0 up to n, and thus it should be linear time.
