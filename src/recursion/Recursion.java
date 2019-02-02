@@ -12,19 +12,28 @@ import java.util.List;
  *
  */
 public class Recursion {
+    
+    public static int fib(int n) {
+        if (n < 0)
+            throw new IllegalArgumentException("n must be non-negative");
+        int f0 = 0;
+        int f1 = 1;
+        return (int) fib(n, 0, f0, f1);
+    }
+    
     /**
-     * Recursively find the n'th fibbonaci number in linear time fib(0) = 1; fib(1)
+     * Recursively find the n'th fibbonaci number in linear time fib(0) = 0; fib(1)
      * = 1; fib(5) = 5; requires n >= 0.
      * 
      * @param n the number in the fibbonaci sequence
      *          <p>
-     *          Largest value of n is 92. For any n > 92, method either return
+     *          Largest safe value of n is 92. For any n > 92, method either return
      *          incorrect value because of int out of range or stack overflow.
      *          </p>
      * 
      * @return the n'th fibbonaci number
      */
-    public static long fib(int n) {
+    public static long longFib(int n) {
         if (n < 0)
             throw new IllegalArgumentException("n must be non-negative");
         int f0 = 0;
@@ -65,7 +74,7 @@ public class Recursion {
     /**
      * Let's see how much better we can do with loops. Seems like for n > 21000, the
      * BigInteger can't be printed out. There is no practical limit otherwise (even
-     * when n = Integer.MAX_VALUE, no error occurs)
+     * when n = Integer.MAX_VALUE, because no error, like StackOverflow occurs)
      * 
      * @param n the number in the fibbonaci sequence
      * @return the n'th fibbonaci number
@@ -110,7 +119,11 @@ public class Recursion {
     }
 
     public static void main(String... args) {
-        System.out.println(fib(92));
+        int n = 0;
+        while (fib(n) == longFib(n)) {
+            n++;
+        }
+        System.out.println(n);
 //        System.out.println(betterFib(9000));
 //        System.out.println(loopFib(21000));
 //        System.out.println(makeAllSums(10));
