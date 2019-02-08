@@ -53,14 +53,14 @@ public class QueenBoard {
      * @return The output string formatted as follows: All numbers that represent
      *         queens are replaced with 'Q', all others are displayed as underscores
      *         '_'. There are spaces between each symbol:
-     * 
+     *
      *         <pre>
-     *         """_ _ Q _ 
+     *         """_ _ Q _
      *         Q _ _ _
      *         _ _ _ Q
      *         _ Q _ _"""
      *         </pre>
-     * 
+     *
      *         (pythonic string notation for clarity, excludes the character up to
      *         the *)
      */
@@ -70,7 +70,7 @@ public class QueenBoard {
 
         for (int row = 0; row < board.length; row++) {
             for (int col = 0; col < board.length; col++) {
-                if (board[row][col] == -1) {
+                if (board[row][col] < 0) {
                     boardStr.append("Q ");
                 } else {
                     boardStr.append("_ ");
@@ -92,7 +92,7 @@ public class QueenBoard {
         if (!isValidBoard()) {
             throw new IllegalStateException("Board should not start with any non-zero value");
         }
-        
+        return isSolvable(0);
     }
 
     /**
@@ -104,9 +104,34 @@ public class QueenBoard {
         if (!isValidBoard()) {
             throw new IllegalStateException("Board should not start with any non-zero value");
         }
+        throw new RuntimeException("Unimplemented");
     }
-    
+
     private boolean isValidBoard() {
         return Arrays.deepEquals(board, new int[board.length][board.length]);
+    }
+
+    private boolean isSolvable(int col) {
+      if (col == board.length) {
+        return true;
+      } else {
+        for (int row = 0; row < board.length; row++) {
+          if (addQueen(row, col)) {
+            if (isSolvable(col + 1)) {
+              return true;
+            }
+          }
+          removeQueen(row, col);
+        }
+        return false;
+      }
+    }
+
+
+    public static void main(String...args) {
+      QueenBoard q = new QueenBoard(Integer.parseInt(args[0]));
+      System.out.println(q.toString());
+      System.out.println(q.solve());
+      System.out.println(q.toString());
     }
 }
