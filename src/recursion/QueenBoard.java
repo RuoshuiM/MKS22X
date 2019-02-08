@@ -107,6 +107,6 @@ public class QueenBoard {
     }
     
     private boolean isValidBoard() {
-        return Arrays.equals(board, new int[board.length][board.length]);
+        return Arrays.deepEquals(board, new int[board.length][board.length]);
     }
 }
