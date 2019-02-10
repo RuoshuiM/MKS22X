@@ -8,6 +8,10 @@ public class QueenBoard {
     public QueenBoard(int size) {
         board = new int[size][size];
     }
+    
+    private void clearBoard() {
+        board = new int[board.length][board.length];
+    }
 
     private boolean addQueen(int r, int c) {
         if (board[r][c] == 0) {
@@ -104,7 +108,16 @@ public class QueenBoard {
         if (!isValidBoard()) {
             throw new IllegalStateException("Board should not start with any non-zero value");
         }
-        throw new RuntimeException("Unimplemented");
+        int numSolutions = 0;
+        for (int row = 0, col = 0; row < board.length; row++) {
+            addQueen(row, col);
+            if (isSolvable(col + 1)) {
+                numSolutions++;
+            }
+            removeQueen(row, col);
+        }
+        
+        return numSolutions;
     }
 
     private boolean isValidBoard() {
@@ -126,12 +139,14 @@ public class QueenBoard {
         return false;
       }
     }
-
-
+    
     public static void main(String...args) {
-      QueenBoard q = new QueenBoard(Integer.parseInt(args[0]));
+//      QueenBoard q = new QueenBoard(Integer.parseInt(args[0]));
+      QueenBoard q = new QueenBoard(20);
       System.out.println(q.toString());
       System.out.println(q.solve());
       System.out.println(q.toString());
+      q.clearBoard();
+      System.out.println(q.countSolutions());
     }
 }
