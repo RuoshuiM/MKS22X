@@ -156,8 +156,8 @@ public class QueenBoard {
     }
     
     public static void main(String...args) {
-//      QueenBoard q = new QueenBoard(Integer.parseInt(args[0]));
-      QueenBoard q = new QueenBoard(14);
+      QueenBoard q = new QueenBoard(Integer.parseInt(args[0]));
+//      QueenBoard q = new QueenBoard(4);
       System.out.println(q.toString());
       System.out.println(q.solve());
       System.out.println(q.toString());
