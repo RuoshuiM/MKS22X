@@ -48,7 +48,7 @@ public class KnightBoard {
 
     /**
      * A helper class to represent a coordinate on the KnightBoard
-     * 
+     *
      * @author ruosh
      *
      */
@@ -61,8 +61,8 @@ public class KnightBoard {
             this.x = x;
             this.y = y;
         }
-        
-        
+
+
         public Cor(int x, int y, boolean b) {
             this.x = x;
             this.y = y;
@@ -78,15 +78,15 @@ public class KnightBoard {
         public int getY() {
             return this.y;
         }
-        
+
         public int getMoves() {
             return this.validMoves;
         }
-        
+
         public void setMoves(int moves) {
             this.validMoves = moves;
         }
-        
+
         @Override
         public int compareTo(Cor thatCoor) {
             return Integer.valueOf(this.validMoves).compareTo(Integer.valueOf(thatCoor.validMoves));
@@ -106,7 +106,7 @@ public class KnightBoard {
         this.board = new int[startingRows][startingCols];
         this.rows = startingRows;
         this.cols = startingCols;
-        this.maxLevel = rows * cols + 1;
+        this.maxLevel = rows * cols;
     }
 
     private void clearBoard() {
@@ -202,7 +202,7 @@ public class KnightBoard {
             return false;
         }
     }
-    
+
     public boolean fastSolve(int row, int col) {
         checkBoard();
         checkInputs(row, col);
@@ -210,7 +210,7 @@ public class KnightBoard {
         throw new RuntimeException("Moves board not filled out");
         // return fastNextMove(row, col, 0);
     }
-    
+
     public boolean fastNextMove(int row, int col, int level) {
         if (level == maxLevel) {
             return true;
@@ -264,17 +264,10 @@ public class KnightBoard {
     public int countSolutions(int startingRow, int startingCol) {
         checkBoard();
         checkInputs(startingRow, startingCol);
-        return subSolutions(startingRow, startingCol, 1, 0);
+        return subSolutions(startingRow, startingCol, 1);
     }
 
-    private int subSolutions(int row, int col, int level, int solutions) {
-        if (level == maxLevel) {
-            return solutions + 1;
-        }
-        
-        if (!addKnight(row, col, level)) {
-            return solutions;
-        }
+    private int subSolutions(int row, int col, int level) {
 
         int nextLevel = level + 1;
         int nextRow, nextCol;
@@ -291,14 +284,21 @@ public class KnightBoard {
         cors.add(new Cor(row + 2, col - 1));
         cors.add(new Cor(row - 2, col - 1));
 
+        int solutions = 0;
         for (Cor cor : cors) {
-
 //            System.out.println(this);
             nextRow = cor.getX();
             nextCol = cor.getY();
-//            System.out.println("cor: " + nextRow + "," + nextCol + "at level" + level);
-            solutions = subSolutions(nextRow, nextCol, nextLevel, solutions);
-            removeKnight(nextRow, nextCol, nextLevel);
+           System.out.println("cor: " + nextRow + "," + nextCol + "at level" + level);
+           // System.out.println(solutions);
+           if (addKnight(row, col, nextLevel)) {
+             if (nextLevel < maxLevel) {
+               solutions += subSolutions(nextRow, nextCol, nextLevel);
+             } else {
+               solutions++;
+             }
+             removeKnight(nextRow, nextCol, nextLevel);
+           }
         }
         return solutions;
     }
