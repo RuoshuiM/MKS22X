@@ -4,6 +4,9 @@
 package recursion;
 
 import java.util.Arrays;
+import javafx.util.Pair;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A knights tour:
@@ -114,82 +117,29 @@ public class KnightBoard {
       else {
         addKnight(row, col, level);
         int nextLevel = level + 1;
-
-        boolean result = false;
         int nextRow, nextCol;
 
+        List<Pair<Integer,Integer>> cors = new ArrayList<>();
+
         // start trying each move
-        nextRow = row + 1;
-        nextCol = col + 2;
-        if (nextMove(nextRow, nextCol, nextLevel)) {
-          return true;
-        } else {
-          removeKnight(nextRow, nextCol);
+        cors.add(new Pair(row + 1, col + 2));
+        cors.add(new Pair(row - 1, col + 2));
+        cors.add(new Pair(row + 1, col - 2));
+        cors.add(new Pair(row - 1, col - 2));
+        cors.add(new Pair(row + 2, col + 1));
+        cors.add(new Pair(row - 2, col + 1));
+        cors.add(new Pair(row + 2, col - 1));
+        cors.add(new Pair(row - 2, col - 1));
+
+        for (Pair<Integer, Integer> cor : cors) {
+          nextRow = cor.getKey();
+          nextCol = cor.getValue();
+          if (nextMove(nextRow, nextCol, nextLevel)) {
+            return true;
+          } else {
+            removeKnight(nextRow, nextCol);
+          }
         }
-
-        nextRow = row - 1;
-        nextCol = col + 2;
-
-        if (nextMove(nextRow, nextCol, nextLevel)) {
-          return true;
-        } else {
-          removeKnight(nextRow, nextCol);
-        }
-
-        nextRow = row + 1;
-        nextCol = col - 2;
-
-        if (nextMove(nextRow, nextCol, nextLevel)) {
-          return true;
-        } else {
-          removeKnight(nextRow, nextCol);
-        }
-
-        nextRow = row - 1;
-        nextCol = col - 2;
-
-        if (nextMove(nextRow, nextCol, nextLevel)) {
-          return true;
-        } else {
-          removeKnight(nextRow, nextCol);
-        }
-
-        nextRow = row + 2;
-        nextCol = col + 1;
-
-        if (nextMove(nextRow, nextCol, nextLevel)) {
-          return true;
-        } else {
-          removeKnight(nextRow, nextCol);
-        }
-
-        nextRow = row - 2;
-        nextCol = col + 1;
-
-        if (nextMove(nextRow, nextCol, nextLevel)) {
-          return true;
-        } else {
-          removeKnight(nextRow, nextCol);
-        }
-
-        nextRow = row + 2;
-        nextCol = col - 1;
-
-        if (nextMove(nextRow, nextCol, nextLevel)) {
-          return true;
-        } else {
-          removeKnight(nextRow, nextCol);
-        }
-
-        nextRow = row - 2;
-        nextCol = col - 1;
-
-        if (nextMove(nextRow, nextCol, nextLevel)) {
-          return true;
-        } else {
-          removeKnight(nextRow, nextCol);
-        }
-        
         return false;
       }
     }
