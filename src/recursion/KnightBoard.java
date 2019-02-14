@@ -4,8 +4,9 @@
 package recursion;
 
 import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * A knights tour:
@@ -40,6 +41,7 @@ import java.util.List;
 public class KnightBoard {
 
     private int[][] board;
+    private int[][] moves;
     private int rows;
     private int cols;
     private int maxLevel;
@@ -50,13 +52,23 @@ public class KnightBoard {
      * @author ruosh
      *
      */
-    private static class Coor {
+    private class Cor implements Comparable<Cor> {
         private final int x;
         private final int y;
+        private int validMoves;
 
-        public Coor(int x, int y) {
+        public Cor(int x, int y) {
             this.x = x;
             this.y = y;
+        }
+        
+        
+        public Cor(int x, int y, boolean b) {
+            this.x = x;
+            this.y = y;
+            if (b) {
+                this.validMoves = moves[x][y];
+            }
         }
 
         public int getX() {
@@ -65,6 +77,19 @@ public class KnightBoard {
 
         public int getY() {
             return this.y;
+        }
+        
+        public int getMoves() {
+            return this.validMoves;
+        }
+        
+        public void setMoves(int moves) {
+            this.validMoves = moves;
+        }
+        
+        @Override
+        public int compareTo(Cor thatCoor) {
+            return Integer.valueOf(this.validMoves).compareTo(Integer.valueOf(thatCoor.validMoves));
         }
     }
 
@@ -101,7 +126,7 @@ public class KnightBoard {
     }
 
     private boolean addKnight(int row, int col, int level) {
-        if (row >= this.rows || col >= this.cols || row < 0 || col < 0) {
+        if (row >= rows || col >= cols || row < 0 || col < 0) {
             return false;
         } else if (board[row][col] != 0) {
             return false;
@@ -112,7 +137,7 @@ public class KnightBoard {
     }
 
     private boolean removeKnight(int row, int col, int level) {
-        if (row >= this.rows || col >= this.cols || row < 0 || col < 0) {
+        if (row >= rows || col >= cols || row < 0 || col < 0) {
             return false;
         } else if (board[row][col] != level) {
             return false;
@@ -150,19 +175,67 @@ public class KnightBoard {
             int nextLevel = level + 1;
             int nextRow, nextCol;
 
-            List<Coor> cors = new ArrayList<>();
+            Set<Cor> cors = new HashSet<>();
 
             // start trying each move
-            cors.add(new Coor(row + 1, col + 2));
-            cors.add(new Coor(row - 1, col + 2));
-            cors.add(new Coor(row + 1, col - 2));
-            cors.add(new Coor(row - 1, col - 2));
-            cors.add(new Coor(row + 2, col + 1));
-            cors.add(new Coor(row - 2, col + 1));
-            cors.add(new Coor(row + 2, col - 1));
-            cors.add(new Coor(row - 2, col - 1));
+            cors.add(new Cor(row + 1, col + 2));
+            cors.add(new Cor(row - 1, col + 2));
+            cors.add(new Cor(row + 1, col - 2));
+            cors.add(new Cor(row - 1, col - 2));
+            cors.add(new Cor(row + 2, col + 1));
+            cors.add(new Cor(row - 2, col + 1));
+            cors.add(new Cor(row + 2, col - 1));
+            cors.add(new Cor(row - 2, col - 1));
 
-            for (Coor cor : cors) {
+            for (Cor cor : cors) {
+
+//                System.out.println(this);
+                nextRow = cor.getX();
+                nextCol = cor.getY();
+//                System.out.println("cor: " + nextRow + "," + nextCol + "at level" + level);
+                if (nextMove(nextRow, nextCol, nextLevel)) {
+                    return true;
+                } else {
+                    removeKnight(nextRow, nextCol, nextLevel);
+                }
+            }
+            return false;
+        }
+    }
+    
+    public boolean fastSolve(int row, int col) {
+        checkBoard();
+        checkInputs(row, col);
+        //TODO: fill out the board here
+        throw new RuntimeException("Moves board not filled out");
+        // return fastNextMove(row, col, 0);
+    }
+    
+    public boolean fastNextMove(int row, int col, int level) {
+        if (level == maxLevel) {
+            return true;
+        } else {
+            if (!addKnight(row, col, level)) {
+                return false;
+            }
+
+            int nextLevel = level + 1;
+            int nextRow, nextCol;
+
+            Set<Cor> cors = new TreeSet<Cor>();
+
+            // start trying each move
+            //TODO: fill out the board and pass to Cor constructors
+            cors.add(new Cor(row + 1, col + 2, true));
+            cors.add(new Cor(row - 1, col + 2, true));
+            cors.add(new Cor(row + 1, col - 2, true));
+            cors.add(new Cor(row - 1, col - 2, true));
+            cors.add(new Cor(row + 2, col + 1, true));
+            cors.add(new Cor(row - 2, col + 1, true));
+            cors.add(new Cor(row + 2, col - 1, true));
+            cors.add(new Cor(row - 2, col - 1, true));
+
+            for (Cor cor : cors) {
 
 //                System.out.println(this);
                 nextRow = cor.getX();
@@ -191,11 +264,43 @@ public class KnightBoard {
     public int countSolutions(int startingRow, int startingCol) {
         checkBoard();
         checkInputs(startingRow, startingCol);
-        throw new RuntimeException("Unimplemented");
+        return subSolutions(startingRow, startingCol, 1, 0);
     }
 
-    private int subSolutions(int rol, int col, int level) {
-        throw new RuntimeException("Unimplemented");
+    private int subSolutions(int row, int col, int level, int solutions) {
+        if (level == maxLevel) {
+            return solutions + 1;
+        }
+        
+        if (!addKnight(row, col, level)) {
+            return solutions;
+        }
+
+        int nextLevel = level + 1;
+        int nextRow, nextCol;
+
+        Set<Cor> cors = new HashSet<>();
+
+        // start trying each move
+        cors.add(new Cor(row + 1, col + 2));
+        cors.add(new Cor(row - 1, col + 2));
+        cors.add(new Cor(row + 1, col - 2));
+        cors.add(new Cor(row - 1, col - 2));
+        cors.add(new Cor(row + 2, col + 1));
+        cors.add(new Cor(row - 2, col + 1));
+        cors.add(new Cor(row + 2, col - 1));
+        cors.add(new Cor(row - 2, col - 1));
+
+        for (Cor cor : cors) {
+
+//            System.out.println(this);
+            nextRow = cor.getX();
+            nextCol = cor.getY();
+//            System.out.println("cor: " + nextRow + "," + nextCol + "at level" + level);
+            solutions = subSolutions(nextRow, nextCol, nextLevel, solutions);
+            removeKnight(nextRow, nextCol, nextLevel);
+        }
+        return solutions;
     }
 
     /**
@@ -269,7 +374,6 @@ public class KnightBoard {
         }
         KnightBoard kb = new KnightBoard(rows, cols);
         System.out.println(kb);
-        kb.solve(0, 0);
-        System.out.println(kb);
+        System.out.println(kb.countSolutions(0, 0));
     }
 }
