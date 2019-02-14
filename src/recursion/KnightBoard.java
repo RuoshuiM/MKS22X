@@ -4,7 +4,6 @@
 package recursion;
 
 import java.util.Arrays;
-import javafx.util.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +26,8 @@ import java.util.List;
  *
  * <p>
  * Not all board sizes have solutions. A 2 by N board has no closed or open
- * tour. From Wikipedia: Any m �� n board with m �� n, a closed knight's tour is
- * always possible unless one or more of these three conditions are met:
+ * tour. From Wikipedia: Any m �� n board with m �� n, a closed knight's tour
+ * is always possible unless one or more of these three conditions are met:
  * <ol>
  * <li>m and n are both odd</li>
  * <li>m = 1, 2, or 4</li>
@@ -46,6 +45,30 @@ public class KnightBoard {
     private int maxLevel;
 
     /**
+     * A helper class to represent a coordinate on the KnightBoard
+     * 
+     * @author ruosh
+     *
+     */
+    private static class Coor {
+        private final int x;
+        private final int y;
+
+        public Coor(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public int getX() {
+            return this.x;
+        }
+
+        public int getY() {
+            return this.y;
+        }
+    }
+
+    /**
      * Initialize the board to the correct size and make them all 0's
      *
      * @throws IllegalArgumentException when either parameter is negative.
@@ -58,7 +81,7 @@ public class KnightBoard {
         this.board = new int[startingRows][startingCols];
         this.rows = startingRows;
         this.cols = startingCols;
-        this.maxLevel = rows * cols - 1;
+        this.maxLevel = rows * cols + 1;
     }
 
     private void clearBoard() {
@@ -78,70 +101,81 @@ public class KnightBoard {
     }
 
     private boolean addKnight(int row, int col, int level) {
-      if (row >= this.rows || col >= this.cols || row < 0 || col < 0) {
-        return false;
-      } else if (board[row][col] != 0) {
-        return false;
-      }
+        if (row >= this.rows || col >= this.cols || row < 0 || col < 0) {
+            return false;
+        } else if (board[row][col] != 0) {
+            return false;
+        } else {
+            board[row][col] = level;
+            return true;
+        }
     }
 
-    private boolean removeKnight(int row, int col) {
-      if (board[row][col] == 0) {
-        return false;
-      } else {
-        board[row][col] = 0;
-        return true;
-      }
+    private boolean removeKnight(int row, int col, int level) {
+        if (row >= this.rows || col >= this.cols || row < 0 || col < 0) {
+            return false;
+        } else if (board[row][col] != level) {
+            return false;
+        } else {
+            board[row][col] = 0;
+            return true;
+        }
     }
 
     /**
-     * Solve the board.
+     * Modifies the board by labeling the moves from 1 (at startingRow,startingCol)
+     * up to the area of the board in proper knight move steps.
      *
      * @throws IllegalStateException    when the board contains non-zero values.
      * @throws IllegalArgumentException when either parameter is negative or out of
      *                                  bounds.
      * @param startingRow
      * @param startingCol
-     * @return false when the board is not solveable and leaves the board filled
-     *         with zeros; true when the board is solveable, and leaves the board in
-     *         a solved state
+     * @returns true when the board is solvable from the specified starting position
      */
     public boolean solve(int startingRow, int startingCol) {
         checkBoard();
         checkInputs(startingRow, startingCol);
-        return nextMove(startingRow, startingCol, 0);
+        return nextMove(startingRow, startingCol, 1);
     }
 
     private boolean nextMove(int row, int col, int level) {
-      if (level == maxLevel) return true;
-      else {
-        addKnight(row, col, level);
-        int nextLevel = level + 1;
-        int nextRow, nextCol;
-
-        List<Pair<Integer,Integer>> cors = new ArrayList<>();
-
-        // start trying each move
-        cors.add(new Pair(row + 1, col + 2));
-        cors.add(new Pair(row - 1, col + 2));
-        cors.add(new Pair(row + 1, col - 2));
-        cors.add(new Pair(row - 1, col - 2));
-        cors.add(new Pair(row + 2, col + 1));
-        cors.add(new Pair(row - 2, col + 1));
-        cors.add(new Pair(row + 2, col - 1));
-        cors.add(new Pair(row - 2, col - 1));
-
-        for (Pair<Integer, Integer> cor : cors) {
-          nextRow = cor.getKey();
-          nextCol = cor.getValue();
-          if (nextMove(nextRow, nextCol, nextLevel)) {
+        if (level == maxLevel) {
             return true;
-          } else {
-            removeKnight(nextRow, nextCol);
-          }
+        } else {
+            if (!addKnight(row, col, level)) {
+                return false;
+            }
+
+            int nextLevel = level + 1;
+            int nextRow, nextCol;
+
+            List<Coor> cors = new ArrayList<>();
+
+            // start trying each move
+            cors.add(new Coor(row + 1, col + 2));
+            cors.add(new Coor(row - 1, col + 2));
+            cors.add(new Coor(row + 1, col - 2));
+            cors.add(new Coor(row - 1, col - 2));
+            cors.add(new Coor(row + 2, col + 1));
+            cors.add(new Coor(row - 2, col + 1));
+            cors.add(new Coor(row + 2, col - 1));
+            cors.add(new Coor(row - 2, col - 1));
+
+            for (Coor cor : cors) {
+
+//                System.out.println(this);
+                nextRow = cor.getX();
+                nextCol = cor.getY();
+//                System.out.println("cor: " + nextRow + "," + nextCol + "at level" + level);
+                if (nextMove(nextRow, nextCol, nextLevel)) {
+                    return true;
+                } else {
+                    removeKnight(nextRow, nextCol, nextLevel);
+                }
+            }
+            return false;
         }
-        return false;
-      }
     }
 
     /**
@@ -152,8 +186,7 @@ public class KnightBoard {
      *                                  bounds.
      * @param startingRow
      * @param startingCol
-     * @return The number of solutions found, and leaves the board filled with only
-     *         0's
+     * @returns the number of solutions from the starting position specified
      */
     public int countSolutions(int startingRow, int startingCol) {
         checkBoard();
@@ -207,16 +240,16 @@ public class KnightBoard {
         StringBuilder s = new StringBuilder();
         String format;
 
-        if (rows * cols > 10 && board[0][0] != 0) {
+        if (rows * cols > 10) {
             // need string padding
-            int length = (int)Math.floor(Math.log10(rows * cols)) + 1;
+            int length = (int) Math.floor(Math.log10(rows * cols)) + 1;
             format = "%" + length + "d";
         } else {
             format = "%d";
         }
 
         for (int i = 0; i < rows; i++) {
-            for (int j = 0 ; j < cols; j++) {
+            for (int j = 0; j < cols; j++) {
                 s.append(String.format(format, board[i][j])).append(" ");
             }
             s.delete(s.length(), s.length()).append("\n");
@@ -225,14 +258,18 @@ public class KnightBoard {
         return s.toString();
     }
 
-    public static void main(String...args) {
-      if (args.length != 0) {
-        int rows = Integer.parseInt(args[0]);
-        int cols = Integer.parseInt(args[1]);
+    public static void main(String... args) {
+        int rows, cols;
+        if (args.length != 0) {
+            rows = Integer.parseInt(args[0]);
+            cols = Integer.parseInt(args[1]);
+        } else {
+            rows = 5;
+            cols = 5;
+        }
         KnightBoard kb = new KnightBoard(rows, cols);
         System.out.println(kb);
         kb.solve(0, 0);
         System.out.println(kb);
-      }
     }
 }
