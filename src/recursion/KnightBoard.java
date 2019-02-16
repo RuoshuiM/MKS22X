@@ -4,7 +4,6 @@
 package recursion;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 
 /**
@@ -466,25 +465,7 @@ public class KnightBoard {
      */
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder();
-        String format;
-
-        if (rows * cols > 10) {
-            // need string padding
-            int length = (int) Math.floor(Math.log10(rows * cols)) + 1;
-            format = "%" + length + "d";
-        } else {
-            format = "%d";
-        }
-
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                s.append(String.format(format, board[i][j])).append(" ");
-            }
-            s.delete(s.length(), s.length()).append("\n");
-        }
-
-        return s.toString();
+        return toString(board);
     }
 
     private String toString(int[][] board) {
@@ -515,8 +496,8 @@ public class KnightBoard {
             rows = Integer.parseInt(args[0]);
             cols = Integer.parseInt(args[1]);
         } else {
-            rows = 5;
-            cols = 5;
+            rows = 8;
+            cols = 8;
         }
 
         long time;
