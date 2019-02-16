@@ -55,20 +55,20 @@ public class KnightBoard {
     /*
      * private class Cor implements Comparable<Cor> { private final int x; private
      * final int y; private int validMoves;
-     * 
+     *
      * public Cor(int x, int y) { this.x = x; this.y = y; }
-     * 
+     *
      * public Cor(int x, int y, boolean b) { this.x = x; this.y = y; if (b) {
      * this.validMoves = moves[x][y]; } }
-     * 
+     *
      * public int getX() { return this.x; }
-     * 
+     *
      * public int getY() { return this.y; }
-     * 
+     *
      * public int getMoves() { return this.validMoves; }
-     * 
+     *
      * public void setMoves(int moves) { this.validMoves = moves; }
-     * 
+     *
      * @Override public int compareTo(Cor thatCoor) { return
      * Integer.valueOf(this.validMoves).compareTo(Integer.valueOf(thatCoor.
      * validMoves)); } }
@@ -103,21 +103,32 @@ public class KnightBoard {
         }
 
         public void sortMoveOrder() {
-            Integer[] o = new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8 };
+          // System.out.println("Sorting...");
+            Integer[] o = new Integer[] { 0, 1, 2, 3, 4, 5, 6, 7 };
             Arrays.sort(o, new movesComparator());
             int[] order = new int[8];
             for (int i = 0; i < o.length; i++) {
+              // auto-unboxing of Integer
                 order[i] = o[i];
             }
             this.order = order;
+            // System.out.println("End Sorting");
         }
 
         private class movesComparator implements Comparator<Integer> {
 
             @Override
             public int compare(Integer o1, Integer o2) {
-                return Integer.valueOf(KnightBoard.this.moves[Cors.this.getRow(o1)][Cors.this.getCol(o1)])
-                        .compareTo(Integer.valueOf(KnightBoard.this.moves[Cors.this.getRow(o2)][Cors.this.getCol(o2)]));
+              int row1 = Cors.this.getRow(o1);
+              int col1 = Cors.this.getCol(o1);
+              int row2 = Cors.this.getRow(o2);
+              int col2 = Cors.this.getCol(o2);
+              if (KnightBoard.this.isCorInBound(row1, col1) && KnightBoard.this.isCorInBound(row2, col2)) {
+                return Integer.valueOf(KnightBoard.this.moves[row1][col1])
+                        .compareTo(Integer.valueOf(KnightBoard.this.moves[row2][col2]));
+              } else {
+                return 0;
+              }
             }
 
         }
@@ -326,6 +337,7 @@ public class KnightBoard {
     }
 
     public boolean fastNextMove(int row, int col, int level) {
+
         if (!addKnightWithMoves(row, col, level)) {
             return false;
         }
@@ -339,11 +351,11 @@ public class KnightBoard {
             for (int i = 0; i < 8; i++) {
                 nextRow = cors.getRow(i);
                 nextCol = cors.getCol(i);
-//               System.out.println("cor: " + nextRow + "," + nextCol + "at level" + level);
+              // System.out.println("cor: " + nextRow + "," + nextCol + "at level" + level);
                 // System.out.println(solutions);
 //               System.out.println(this);
                 if (nextLevel < maxLevel) {
-                    if (nextMove(nextRow, nextCol, nextLevel)) {
+                    if (fastNextMove(nextRow, nextCol, nextLevel)) {
                         return true; // ignore false value;
                     }
                 }
@@ -506,10 +518,24 @@ public class KnightBoard {
             rows = 5;
             cols = 5;
         }
+
+        long time;
+
         KnightBoard kb = new KnightBoard(rows, cols);
         System.out.println(kb);
-//        System.out.println(kb.solve(0, 0));
-        System.out.println(kb.fastSolve(4, 0));
+      time = System.nanoTime();
+       // System.out.println(kb.solve(0, 0));
+        // System.out.println(kb.fastSolve(0, 0));
+        System.out.println(System.nanoTime() - time);
+
+        kb.clearBoard();
+
+        time = System.nanoTime();
+       // System.out.println(kb.solve(0, 0));
+        System.out.println(kb.fastSolve(0, 0));
+        System.out.println(System.nanoTime() - time);
+
+
 //        System.out.println(kb.countAllSolutions());
         System.out.println(kb);
 //        kb.fillMoves();
