@@ -57,14 +57,23 @@ public class Maze {
      * for out of bounds!</li>
      * </ol>
      * 
+     * @throws IOException
      * @throws FileNotFoundException When the file is not found
      * @throws IllegalStateException When the file is invalid (not exactly 1 E and 1
      *                               S)
      * 
      */
-    public Maze(String filename) throws FileNotFoundException {
+    public Maze(String filename) throws FileNotFoundException, IOException {
         // COMPLETE CONSTRUCTOR
         String filepath = System.getProperty("user.dir").concat("\\src\\recursion\\" + filename);
+
+        // For running from bash in /bin
+        // filepath = System.getProperty("user.dir").concat("\\..\\src\\recursion\\" +
+        // filename);
+
+        // debug
+        // System.out.println(filepath);
+
         StringBuilder lines = new StringBuilder();
 
         final String lnBk = System.lineSeparator();
@@ -74,14 +83,13 @@ public class Maze {
             String line = file.readLine();
 
             while (line != null) {
-                System.out.println(line);
+                // debug
+                // System.out.println(line);
                 lines.append(line);
                 lines.append(lnBk);
                 line = file.readLine();
             }
 
-        } catch (IOException e) {
-            System.err.println("Error reading file");
         }
 
         String lineStr = lines.toString();
@@ -89,17 +97,19 @@ public class Maze {
         Matcher m = Pattern.compile("[E|S]").matcher(lineStr);
 
         int ECount = 0, SCount = 0;
+        int posS = 0;
         while (m.find()) {
             String c = m.group();
             if (c.equals("E"))
                 ECount++;
             else if (c.equals("S")) {
                 SCount++;
-                this.startCol = m.start();
+                posS = m.start();
             }
         }
 
         if (ECount != 1 || SCount != 1) {
+            System.err.println(lineStr);
             throw new IllegalStateException("File should contain exactly 1 E and 1 S");
         }
 
@@ -110,13 +120,21 @@ public class Maze {
             charArray[i] = rows[i].split("");
         }
 
-        this.startRow = this.startCol / charArray[0].length + lnBk.length() - 2;
-        this.startCol %= charArray[0].length + lnBk.length();
+//        this.startRow = posS / charArray[0].length + lnBk.length() - 2;
+//        this.startCol %= charArray[0].length + lnBk.length();
 
-        System.out.format("Row: %d Col: %d%n", startRow, startCol);
-        
+        for (int i = 0; i < rows.length; i++) {
+            if (rows[i].contains("S")) {
+                this.startRow = i;
+                this.startCol = rows[i].indexOf("S");
+            }
+        }
+
+        // debug
+        // System.out.format("Row: %d Col: %d%n", startRow, startCol);
+
         this.maze = charArray;
-        
+
         this.setAnimate(false);
     }
 
@@ -159,7 +177,7 @@ public class Maze {
 
         // return solve(???,???);
         this.maze[startRow][startCol] = " ";
-        return solve(startRow, startRow, 0);
+        return solve(startRow, startCol, 0);
     }
 
     /**
@@ -189,12 +207,16 @@ public class Maze {
 
             wait(20);
         }
-        System.out.println(level);
+        
+//         debug
+//        System.out.println(level);
+        
         // COMPLETE SOLVE
         if (maze[row][col].equals(" ")) {
             // try all directions
             maze[row][col] = "@";
-//
+
+            //
 //            int up = solve(row - 1, col, level + 1);
 //            if (up != -1)
 //                return up;

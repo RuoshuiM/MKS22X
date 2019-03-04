@@ -4,6 +4,7 @@
 package recursion;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  *
@@ -18,20 +19,22 @@ public class Driver {
         if (args.length == 2) {
             filename = args[2];
         } else {
-            filename = "Maze1.txt";
+            filename = "data3.dat";
         }
         try {
             Maze f;
             f = new Maze(filename);// true animates the maze.
 
-            f.setAnimate(true);
+//            f.setAnimate(true);
             
-            f.solve();
+            System.out.println(f.solve());
             
             System.out.println(f);
             
         } catch (FileNotFoundException e) {
             System.err.println("Invalid filename: " + filename);
+        } catch (IOException e) {
+            System.err.println("Error reading file");
         }
     }
 
