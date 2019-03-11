@@ -16,8 +16,8 @@ public class Driver {
      */
     public static void main(String[] args) {
         String filename;
-        if (args.length == 2) {
-            filename = args[2];
+        if (args.length == 1) {
+            filename = args[0];
         } else {
             filename = "data3.dat";
         }

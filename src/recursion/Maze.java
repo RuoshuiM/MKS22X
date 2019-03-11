@@ -97,14 +97,13 @@ public class Maze {
         Matcher m = Pattern.compile("[E|S]").matcher(lineStr);
 
         int ECount = 0, SCount = 0;
-        int posS = 0;
         while (m.find()) {
             String c = m.group();
             if (c.equals("E"))
                 ECount++;
             else if (c.equals("S")) {
                 SCount++;
-                posS = m.start();
+//                posS = m.start();
             }
         }
 
@@ -119,7 +118,8 @@ public class Maze {
         for (int i = 0; i < rows.length; i++) {
             charArray[i] = rows[i].split("");
         }
-
+        
+//        hard to do it this way
 //        this.startRow = posS / charArray[0].length + lnBk.length() - 2;
 //        this.startCol %= charArray[0].length + lnBk.length();
 
