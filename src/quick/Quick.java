@@ -34,7 +34,7 @@ public class Quick {
      * before the pivot element. <br>
      * 4. all elements in range that are larger than the pivot element are placed
      * after the pivot element.
-     * 
+     *
      * @return the index of the final position of the pivot element.
      */
     static int partition(int[] data, int start, int end) {
@@ -71,11 +71,45 @@ public class Quick {
         arr[b] = tmp;
     }
 
-    public static void main(String[] args) {
-        for (int i = 0; i < 6; i++) {
-            int[] ary = { 2, 10, 15, 23, 0, 5 };
-            System.out.println(quickselect(ary, i));
+    private static int[] partitionDutch(int[] data,int start, int end){
+      Random rand = new Random();
+      int pivotIndex = rand.nextInt(end + 1 - start) + start;
+      int pivot = data[pivotIndex];
+
+      for (int i = start + 1; i <= end; i++) {
+        int cur = data[i];
+        if (cur > pivot) {
+              aswap(data, i, end);
+              end--;
+        } else if (cur < pivot) {
+            aswap(data, i, start);
+            start++;
+        } else {
+            aswap(data, i, start);
         }
+      }
+
+    return new int[] {start, end};
+  }
+
+    /**
+     * Modify the array to be in increasing order.
+     */
+     public static void quicksort(int[] data) {
+
+     }
+
+
+    public static void main(String[] args) {
+      int[] arr = {0, 2, 3, 2, 1, 2, 2, 4, 5, 7};
+      System.out.println("Arr: "+Arrays.toString(arr));
+      int[] result = partitionDutch(arr, 0, arr.length-1);
+      System.out.println("Partitioned: " + Arrays.toString(arr));
+      System.out.println("Re: " + Arrays.toString(result));
+        // for (int i = 0; i < 6; i++) {
+        //     int[] ary = { 2, 10, 15, 23, 0, 5 };
+        //     System.out.println(quickselect(ary, i));
+        // }
     }
 
 }
