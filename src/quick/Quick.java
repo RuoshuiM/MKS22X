@@ -1,6 +1,5 @@
 package quick;
 
-import java.util.Arrays;
 import java.util.Random;
 
 public class Quick {
@@ -71,45 +70,66 @@ public class Quick {
         arr[b] = tmp;
     }
 
-    private static int[] partitionDutch(int[] data,int start, int end){
-      Random rand = new Random();
-      int pivotIndex = rand.nextInt(end + 1 - start) + start;
-      int pivot = data[pivotIndex];
+    public static int[] partitionDutch(int[] data, int start, int end) {
+        Random rand = new Random();
+        int pivotIndex = rand.nextInt(end + 1 - start) + start;
+        int pivot = data[pivotIndex];
 
-      for (int i = start + 1; i <= end; i++) {
-        int cur = data[i];
-        if (cur > pivot) {
-              aswap(data, i, end);
-              end--;
-        } else if (cur < pivot) {
-            aswap(data, i, start);
-            start++;
-        } else {
-            aswap(data, i, start);
+        // swap pivot with first element
+        aswap(data, start, pivotIndex);
+        pivotIndex = start;
+
+        // use i to iterate through array
+        // increment i only if cur == pivot or cur < pivot,
+        // since the left side is always good; right side might have random vals
+        
+//        int i = start + 1;
+//        while (i <= end) {
+//            int cur = data[i];
+//            if (cur > pivot) {
+//                aswap(data, i, end);
+//                end--;
+//            } else if (cur < pivot) {
+//                aswap(data, i, start);
+//                start++;
+//                i++;
+//            } else {
+//                i++;
+//            }
+//        }
+        
+        // equivalent to the while loop
+        for (int i = start + 1; i <= end; i++) {
+            int cur = data[i];
+            if (cur > pivot) {
+                aswap(data, i, end);
+                end--;
+                i--;
+            } else if (cur < pivot) {
+                aswap(data, i, start);
+                start++;
+            }
         }
-      }
-
-    return new int[] {start, end};
-  }
+        
+        
+        return new int[] { start, end };
+    }
 
     /**
      * Modify the array to be in increasing order.
      */
-     public static void quicksort(int[] data) {
-
-     }
-
-
-    public static void main(String[] args) {
-      int[] arr = {0, 2, 3, 2, 1, 2, 2, 4, 5, 7};
-      System.out.println("Arr: "+Arrays.toString(arr));
-      int[] result = partitionDutch(arr, 0, arr.length-1);
-      System.out.println("Partitioned: " + Arrays.toString(arr));
-      System.out.println("Re: " + Arrays.toString(result));
-        // for (int i = 0; i < 6; i++) {
-        //     int[] ary = { 2, 10, 15, 23, 0, 5 };
-        //     System.out.println(quickselect(ary, i));
-        // }
+    public static void quicksort(int[] data) {
+        quicksort(data, 0, data.length - 1);
+    }
+    
+    private static void quicksort(int[] data, int start, int end) {
+        if (end - start < 1) return;
+        
+        int[] re = partitionDutch(data, start, end);
+        int lt = re[0];
+        int gt = re[1];
+        quicksort(data, start, lt - 1);
+        quicksort(data, gt + 1, end);
     }
 
 }

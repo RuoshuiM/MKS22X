@@ -2,11 +2,11 @@ package quick;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.Random;
+import java.util.Arrays;
 
 import org.junit.Test;
 
-public class testPartition {
+public class PartitionTest {
 
     @Test(expected = AssertionError.class)
     public void testAssertionEnabled() {
@@ -20,7 +20,7 @@ public class testPartition {
         int end = size - 1;
 
         for (int i = 0; i < 3; i++) {
-            int[] arr = generateIntArray(size, 0, 10000);
+            int[] arr = TestTools.generateIntArray(size, 0, 10000);
             int pivotIndex = Quick.partition(arr, start, end);
             testArrayPivoted(arr, pivotIndex, start, end);
         }
@@ -33,7 +33,7 @@ public class testPartition {
         int end = size - 1;
 
         for (int i = 0; i < 2; i++) {
-            int[] arr = generateIntArray(size, 0, 10000);
+            int[] arr = TestTools.generateIntArray(size, 0, 10000);
             int pivotIndex = Quick.partition(arr, start, end);
             testArrayPivoted(arr, pivotIndex, start, end);
         }
@@ -49,7 +49,7 @@ public class testPartition {
             int start = 0;
             int end = size - 1;
 
-            int[] arr = generateIntArray(size, 0, 10000);
+            int[] arr = TestTools.generateIntArray(size, 0, 10000);
             int pivotIndex = Quick.partition(arr, start, end);
             testArrayPivoted(arr, pivotIndex, start, end);
         }
@@ -62,7 +62,7 @@ public class testPartition {
         int end = size - 1;
 
         for (int i = 0; i < 2; i++) {
-            int[] arr = generateIntArray(size, 0);
+            int[] arr = TestTools.generateIntArray(size, 0);
             int pivotIndex = Quick.partition(arr, start, end);
             testArrayPivoted(arr, pivotIndex, start, end);
         }
@@ -75,9 +75,44 @@ public class testPartition {
         int end = size - 1;
 
         for (int i = 0; i < 3; i++) {
-            int[] arr = generateIntArray(size, 1, 20);
+            int[] arr = TestTools.generateIntArray(size, 1, 20);
             int pivotIndex = Quick.partition(arr, start, end);
             testArrayPivoted(arr, pivotIndex, start, end);
+        }
+    }
+
+    @Test
+    public void testDutchRepetition() {
+        final int size = 1000;
+        int start = 0;
+        int end = size - 1;
+
+        for (int i = 0; i < 3; i++) {
+            int[] arr = TestTools.generateIntArray(size, 1, 3);
+            int result[] = Quick.partitionDutch(arr, start, end);
+            int low = result[0], high = result[1];
+            testArrayPivoted(arr, low, high, start, end);
+        }
+    }
+    
+    @Test
+    public void testDutchTwoVals() {
+        final int size = 2;
+        int start = 0;
+        int end = size - 1;
+        
+        for (int i = 0; i < 3; i++) {
+            int[] arr = TestTools.generateIntArray(size, 1);
+            int result[] = Quick.partitionDutch(arr, start, end);
+            int low = result[0], high = result[1];
+            testArrayPivoted(arr, low, high, start, end);
+        }
+        
+        for (int i = 0; i < 3; i++) {
+            int[] arr = TestTools.generateIntArray(size, -5, 3);
+            int result[] = Quick.partitionDutch(arr, start, end);
+            int low = result[0], high = result[1];
+            testArrayPivoted(arr, low, high, start, end);
         }
     }
 
@@ -94,24 +129,23 @@ public class testPartition {
 //        System.out.println("Pivot: " + pivot);
     }
 
-    private int[] generateIntArray(int size, int min, int max) {
-        Random rand = new Random();
-        int[] a = new int[size];
-        int range = max + 1 - min;
-        for (int i = 0; i < size; i++) {
-            a[i] = rand.nextInt(range) + min;
+    private void testArrayPivoted(int[] arr, int low, int high, int start, int end) {
+        int pivot = arr[low];
+        for (int i = start; i < low; i++) {
+            assertTrue("Vals on the left of low bound should be < pivot", arr[i] < pivot);
         }
 
-        return a;
-    }
-
-    private int[] generateIntArray(int size, int min) {
-        Random rand = new Random();
-        int[] a = new int[size];
-        for (int i = 0; i < size; i++) {
-            a[i] = rand.nextInt() + min;
+        for (int i = low; i <= high; i++) {
+            assertTrue("Vals in between low and high bound should == pivot", arr[i] == pivot);
         }
 
-        return a;
+        for (int i = high + 1; i <= end; i++) {
+            assertTrue("Vals on the right of high bound should be > pivot", arr[i] > pivot);
+        }
+        System.out.println(Arrays.toString(arr));
+        System.out.format("Low: %d, high: %d, pivot: %d%n", low, high, pivot);
+        System.out.format("Start: %d, end: %d%n", start, end);
     }
+
+
 }
