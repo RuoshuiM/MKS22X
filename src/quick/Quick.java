@@ -3,6 +3,7 @@ package quick;
 import java.util.Random;
 
 public class Quick {
+    final int INSERSIONSORT_THRESHOLD = 45;
 
     /**
      * @return the value that is the kth smallest value of the array.
@@ -37,6 +38,11 @@ public class Quick {
      * @return the index of the final position of the pivot element.
      */
     static int partition(int[] data, int start, int end) {
+
+        if (end - start + 1 < INSERSIONSORT_THRESHOLD) {
+          insertionsort(data, start, end);
+        }
+
         Random rand = new Random();
         int pivotIndex = rand.nextInt(end + 1 - start) + start;
         int pivot = data[pivotIndex];
@@ -64,6 +70,24 @@ public class Quick {
         return pivot == data[start] ? start : start - 1;
     }
 
+    static void insertionsort(int[] arr, int low, int high) {
+      // i is the current number to be inserted, high is inclusive
+      for (int i = low + 1; i <= high; i++) {
+        int cur = arr[i];
+        // loop through all the sorted elements
+        for (int j = i - 1; j >= low; j--) {
+          // if current number is greater than the sorted value, then cur is in sorted position
+          // System.out.format("cur: %d, future: %d%ncurIndex: %d, futureIndex:%d%n", cur, arr[j], i, j);
+          if (cur >= arr[j]) {
+            break;
+          } else {
+            aswap(arr, j + 1, j);
+            // System.out.format("Switched, first: %d, second: %d%n", arr[i], arr[j]);
+          }
+          // System.out.format("Switched: %s%n", Arrays.toString(arr));
+        }
+        }
+
     private static void aswap(int[] arr, int a, int b) {
         int tmp = arr[a];
         arr[a] = arr[b];
@@ -82,7 +106,7 @@ public class Quick {
         // use i to iterate through array
         // increment i only if cur == pivot or cur < pivot,
         // since the left side is always good; right side might have random vals
-        
+
 //        int i = start + 1;
 //        while (i <= end) {
 //            int cur = data[i];
@@ -97,7 +121,7 @@ public class Quick {
 //                i++;
 //            }
 //        }
-        
+
         // equivalent to the while loop
         for (int i = start + 1; i <= end; i++) {
             int cur = data[i];
@@ -110,8 +134,8 @@ public class Quick {
                 start++;
             }
         }
-        
-        
+
+
         return new int[] { start, end };
     }
 
@@ -121,10 +145,10 @@ public class Quick {
     public static void quicksort(int[] data) {
         quicksort(data, 0, data.length - 1);
     }
-    
+
     private static void quicksort(int[] data, int start, int end) {
         if (end - start < 1) return;
-        
+
         int[] re = partitionDutch(data, start, end);
         int lt = re[0];
         int gt = re[1];
