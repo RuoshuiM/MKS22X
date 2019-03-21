@@ -3,12 +3,9 @@ package merge;
 import java.util.Arrays;
 
 public class Merge {
-    
-    /* sort the array from least to greatest value. This is a wrapper function */
-    public static void mergesort(int[] data) {
-        mergesort(data, new int[data.length], 0, data.length - 1);
-    }
-    
+
+    final static int INSERTIONSORT_THRESHOLD = 47;
+
     /* sort the array from least to greatest value. This is a wrapper function */
     public static void slowMergesort(int[] data) {
         System.arraycopy(slowMergesortHelper(data), 0, data, 0, data.length);
@@ -27,6 +24,11 @@ public class Merge {
         high = slowMergesortHelper(high);
 
         return merge(low, high);
+    }
+
+    /* sort the array from least to greatest value. This is a wrapper function */
+    public static void mergesort(int[] data) {
+        mergesort(data, new int[data.length], 0, data.length - 1);
     }
 
     private static int[] merge(int[] a, int[] b) {
@@ -60,35 +62,43 @@ public class Merge {
 
     /**
      * Mergesorts data using temp, merging back into data.
+     * 
      * @param data
      * @param temp
-     * @param lo Lower-bound of array-index, inclusive
-     * @param hi Upper-bound of array-index, inclusive
+     * @param lo   Lower-bound of array-index, inclusive
+     * @param hi   Upper-bound of array-index, inclusive
      */
     private static void mergesort(int[] data, int[] temp, int lo, int hi) {
-        if (lo >= hi) return;
+        if (lo >= hi)
+            return;
         
+        if (hi - lo + 1 < INSERTIONSORT_THRESHOLD) {
+            insertionsort(data, lo, hi);
+            return;
+        }
+
         int mid = (lo + hi) / 2;
-        
+
         System.arraycopy(data, lo, temp, lo, hi - lo + 1);
 
         mergesort(temp, data, lo, mid);
         mergesort(temp, data, mid + 1, hi);
-        
+
         // debug
 //        System.out.println("Merging: " + partialToString(temp, lo, mid + 1) + " and " + partialToString(temp, mid + 1, hi + 1));
         merge(data, temp, lo, mid, hi);
-        
+
         // debug
 //        System.out.println("Merged: " + partialToString(data, lo, hi + 1));
     }
-    
+
     static String partialToString(int[] arr, int start, int end) {
         return Arrays.toString(Arrays.copyOfRange(arr, start, end));
     }
-    
+
     /**
      * Merges temp into data
+     * 
      * @param data
      * @param temp
      * @param low
@@ -104,10 +114,10 @@ public class Merge {
         int bStart = mid + 1;
         int aLength = mid - aStart + 1;
         int bLength = high - bStart + 1;
-        
+
         // debug
 //        System.out.format("aSt: %d, bSt: %d, aLen: %d, bLen: %d, tLen: %d%n", aStart, bStart, aLength, bLength, resultLength);
-        
+
         for (int ai = aStart, bi = bStart, i = low; i < end; i++) {
             if (ai == aLength + aStart) {
                 while (i < end) {
@@ -129,10 +139,37 @@ public class Merge {
                 bi++;
             }
         }
-        
+
     }
 
-    public static void main(String[] args) {        
+    static void insertionsort(int[] arr, int low, int high) {
+        // i is the current number to be inserted, high is inclusive
+        for (int i = low + 1; i <= high; i++) {
+            int cur = arr[i];
+            // loop through all the sorted elements
+            for (int j = i - 1; j >= low; j--) {
+                // if current number is greater than the sorted value, then cur is in sorted
+                // position
+                // System.out.format("cur: %d, future: %d%ncurIndex: %d, futureIndex:%d%n", cur,
+                // arr[j], i, j);
+                if (cur >= arr[j]) {
+                    break;
+                } else {
+                    aswap(arr, j + 1, j);
+                    // System.out.format("Switched, first: %d, second: %d%n", arr[i], arr[j]);
+                }
+                // System.out.format("Switched: %s%n", Arrays.toString(arr));
+            }
+        }
+    }
+
+    private static void aswap(int[] arr, int a, int b) {
+        int tmp = arr[a];
+        arr[a] = arr[b];
+        arr[b] = tmp;
+    }
+
+    public static void main(String[] args) {
         compareSorts();
     }
 
