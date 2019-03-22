@@ -43,30 +43,43 @@ public class MyDeque<E> {
      * Add: en-queue
      */
     public void addFirst(E element) {
+        if (element == null) {
+            throw new NullPointerException("Element cannot be null");
+        }
+
         if (size == data.length) {
             grow();
         }
 
-        if (--start == 0) {
-            start = data.length;
+        start--;
+        if (start < 0) {
+            start = data.length - 1;
         }
 
         data[start] = element;
+        size++;
     }
 
     /**
      * Add: push
      */
     public void addLast(E element) {
+
+        if (element == null) {
+            throw new NullPointerException("Element cannot be null");
+        }
+
         if (size == data.length) {
             grow();
         }
 
-        if (++end == data.length) {
+        end++;
+        if (end >= data.length) {
             end = 0;
         }
 
         data[end] = element;
+        size++;
     }
 
     private void grow() {
@@ -89,6 +102,7 @@ public class MyDeque<E> {
     }
 
     public E removeFirst() {
+
         if (size == 0) {
             throw new NoSuchElementException("No more elements in collection");
         }
@@ -97,7 +111,7 @@ public class MyDeque<E> {
 
         // We don't have to delete old value, since it is no longer pointed to
         start++;
-        size++;
+        size--;
 
         // If start index is out of array, reset it
         if (start >= data.length) {
@@ -132,5 +146,20 @@ public class MyDeque<E> {
 
     public E getLast() {
         return data[this.end];
+    }
+
+    public static void main(String[] args) {
+      MyDeque<Integer> md = new MyDeque<>();
+      md.addFirst(5);
+      System.out.println(md.removeFirst());
+      md.addLast(5);
+      System.out.println(md.removeLast());
+
+      for (int i = 0; i < 100; i ++) {
+        md.addLast(i);
+      }
+      while (md.size() != 0) {
+        System.out.println(md.removeLast());
+      }
     }
 }
