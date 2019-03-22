@@ -1,4 +1,4 @@
-package quick;
+package recursion.sort;
 
 import static org.junit.Assert.*;
 
