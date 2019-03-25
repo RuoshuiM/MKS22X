@@ -1,6 +1,7 @@
 package data;
 
 import java.util.NoSuchElementException;
+import java.util.Arrays;
 
 public class MyDeque<E> {
     private E[] data;
@@ -134,7 +135,7 @@ public class MyDeque<E> {
 
         // If start index is out of array, reset it
         if (end < 0) {
-            end = data.length;
+            end = data.length - 1;
         }
 
         return e;
@@ -148,6 +149,10 @@ public class MyDeque<E> {
         return data[this.end];
     }
 
+    public E[] getData() {
+      return data;
+    }
+
     public static void main(String[] args) {
       MyDeque<Integer> md = new MyDeque<>();
       md.addFirst(5);
@@ -157,9 +162,11 @@ public class MyDeque<E> {
 
       for (int i = 0; i < 100; i ++) {
         md.addLast(i);
+        System.out.format("Adding %d, array: %s%n%n",i , Arrays.toString(md.getData()));
       }
       while (md.size() != 0) {
-        System.out.println(md.removeLast());
+        int n = md.removeLast();
+        System.out.format("Removed %d, array: %s%n%n",n, Arrays.toString(md.getData()));
       }
     }
 }
