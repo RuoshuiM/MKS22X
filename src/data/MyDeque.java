@@ -29,13 +29,22 @@ public class MyDeque<E> {
     public String toString() {
         StringBuilder str = new StringBuilder();
         str.append("{");
-        for (int i = this.start; i < size; i++) {
-            if (i > data.length) {
-                i = 0;
-            }
-            str.append(data[i]);
+        for (int i = 0, c = start; i < size; i++, c++) {
+            if (c == data.length) c = 0;
+            str.append(data[c]);
             str.append(" ");
         }
+//        int i = start;
+//        do {
+//            str.append(data[i++]);
+//            str.append(" ");
+//            if (i == data.length) {
+//                i = 0;
+//            }
+//        } while (i != end);
+//        str.append(data[i]);
+//        str.append(" ");
+        
         str.append("}");
         return str.toString();
     }
@@ -52,7 +61,9 @@ public class MyDeque<E> {
             grow();
         }
 
-        start--;
+        if (data[start] != null)
+            start--;
+
         if (start < 0) {
             start = data.length - 1;
         }
@@ -74,7 +85,8 @@ public class MyDeque<E> {
             grow();
         }
 
-        end++;
+        if (data[end] != null)
+            end++;
         if (end >= data.length) {
             end = 0;
         }
@@ -83,19 +95,31 @@ public class MyDeque<E> {
         size++;
     }
 
+    /**
+     * 
+     * @param start Starting point of the data array, inclusive
+     */
     private void grow() {
         int oldCapacity = data.length;
         int newCapacity = oldCapacity + (oldCapacity >> 1);
         @SuppressWarnings("unchecked")
         E[] newData = (E[]) new Object[newCapacity];
 
-        for (int i = start, j = 0; i != end; i++, j++) {
-            if (i == data.length) {
-                i = 0;
-            }
-
-            newData[j] = data[i];
+        
+        for (int i = 0, c = start; i < size; i++, c++) {
+            if (c == data.length) c = 0;
+            newData[i] = data[c];
         }
+        
+//        int oldIndex = start;
+//        int newIndex = 0;
+//        do {
+//            newData[newIndex++] = data[oldIndex++];
+//            if (oldIndex == data.length) {
+//                oldIndex = 0;
+//            }
+//        } while (oldIndex != end);
+//        newData[newIndex] = data[oldIndex];
 
         data = newData;
         start = 0;
@@ -150,23 +174,54 @@ public class MyDeque<E> {
     }
 
     public E[] getData() {
-      return data;
+        return data;
+    }
+    
+    /**
+     * Same as this.getLast()
+     * @return
+     */
+    public E pop() {
+        return this.removeLast();
+    }
+    
+    /**
+     * Same as this.addLast()
+     * @param element
+     */
+    public void push(E element) {
+        this.addLast(element);
     }
 
     public static void main(String[] args) {
-      MyDeque<Integer> md = new MyDeque<>();
-      md.addFirst(5);
-      System.out.println(md.removeFirst());
-      md.addLast(5);
-      System.out.println(md.removeLast());
+        MyDeque<Integer> md = new MyDeque<>();
+        md.addFirst(5);
+        System.out.println(md.removeFirst());
+        md.addLast(5);
+        System.out.println(md.removeLast());
 
-      for (int i = 0; i < 100; i ++) {
-        md.addLast(i);
-        System.out.format("Adding %d, array: %s%n%n",i , Arrays.toString(md.getData()));
-      }
-      while (md.size() != 0) {
-        int n = md.removeLast();
-        System.out.format("Removed %d, array: %s%n%n",n, Arrays.toString(md.getData()));
-      }
+        for (int i = 0; i < 100; i++) {
+            md.addLast(i);
+            System.out.format("Adding %d, array: %s%n%n", i, md.toString());
+            System.out.format("Size %d%n", md.size());
+        }
+        for (int i = 0; i < 100; i++) {
+            md.addFirst(i);
+            System.out.format("Adding %d, array: %s%n%n", i, md.toString());
+            System.out.format("Size %d%n", md.size());
+        }
+        while (md.size() != 0) {
+            
+            int look = md.getLast();
+            int n = md.removeLast();
+            assert n == look;
+            look = md.getFirst();
+            n = md.removeFirst();
+            assert n == look;
+            
+            System.out.format("Removed %d, array: %s%n%n", n, md.toString());
+            System.out.format("Size %d%n", md.size());
+        }
+
     }
 }
