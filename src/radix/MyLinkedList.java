@@ -24,7 +24,8 @@ public class MyLinkedList<E> implements Iterable<E> {
     /** size of the list */
     private int size = 0;
 
-    private int modCount;
+    /** used for attempt to prevent concurrent modification on iteration */
+    private int modCount = 0;
 
     /**
      * Pointer to the fist node;
@@ -40,6 +41,16 @@ public class MyLinkedList<E> implements Iterable<E> {
      * Makes an empty list
      */
     public MyLinkedList() {
+    }
+    
+    /**
+     * Makes a copy of the given MyLinkedList by only copying references
+     * @param orig
+     */
+    public void from(MyLinkedList<E> other) {
+        first = other.first;
+        last = other.last;
+        size = other.size;
     }
     
     public MyLinkedList(Collection<? extends E> c) {
@@ -133,7 +144,7 @@ public class MyLinkedList<E> implements Iterable<E> {
     }
 
     /**
-     * Reset the list to an empty state
+     * Reset the list to an empty state, breaking link between each node
      */
     public void clear() {
         Node<E> x = first;
@@ -144,6 +155,15 @@ public class MyLinkedList<E> implements Iterable<E> {
             f.item = null;
         }
 
+        first = last = null;
+        size = 0;
+        modCount++;
+    }
+    
+    /**
+     * Reset the list to an empty state by removing references only
+     */
+    public void minimalClear() {
         first = last = null;
         size = 0;
         modCount++;
@@ -160,6 +180,17 @@ public class MyLinkedList<E> implements Iterable<E> {
         size += other.size();
         last = other.last;
         modCount++;
+    }
+    
+    public Object[] toArray() {
+        Object[] results = new Object[size];
+        
+        int i = 0;
+        for (Node<E> p = first; p != null; p = p.next) {
+            results[i++] = p.item;
+        }
+        
+        return results;
     }
 
     /*
@@ -223,7 +254,7 @@ public class MyLinkedList<E> implements Iterable<E> {
         
         return cur;
     }
-
+    
     private static class Node<E> {
         E item;
         Node<E> prev;
