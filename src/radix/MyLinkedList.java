@@ -10,12 +10,12 @@ import java.util.NoSuchElementException;
 /**
  * Doubly-linked implementation of a list and a deque. Provides minimalist
  * support for radix sort operations.
- * 
+ *
  * <p>
  * The only extra operation this list supports over {@link java.util.LinkedList}
  * is that it supports an extend method to quickly link two lists together.
  * </p>
- * 
+ *
  * @author ruosh
  *
  * @param <E> the type of elements held in this collection
@@ -42,9 +42,9 @@ public class MyLinkedList<E> implements Iterable<E> {
      */
     public MyLinkedList() {
     }
-    
+
     /**
-     * Makes a copy of the given MyLinkedList by only copying references
+     * Copy the references to the other LinkedList to this
      * @param orig
      */
     public void from(MyLinkedList<E> other) {
@@ -52,7 +52,7 @@ public class MyLinkedList<E> implements Iterable<E> {
         last = other.last;
         size = other.size;
     }
-    
+
     public MyLinkedList(Collection<? extends E> c) {
         this();
         for (E e : c) {
@@ -66,7 +66,7 @@ public class MyLinkedList<E> implements Iterable<E> {
     public int size() {
         return size;
     }
-    
+
     private void checkIndex(int index) {
         if (index >= size || index < 0) {
             throw new IndexOutOfBoundsException();
@@ -75,7 +75,7 @@ public class MyLinkedList<E> implements Iterable<E> {
 
     /**
      * Add an element to the end of the list
-     * 
+     *
      * @param ele element to be added
      */
     public void addLast(E ele) {
@@ -92,7 +92,7 @@ public class MyLinkedList<E> implements Iterable<E> {
 
     /**
      * Add an element to the front of the list
-     * 
+     *
      * @param ele element to be added
      */
     public void addFirst(E ele) {
@@ -109,7 +109,7 @@ public class MyLinkedList<E> implements Iterable<E> {
 
     /**
      * Removes the first element from the list and return it
-     * 
+     *
      * @return the first element
      * @throws NoSuchElementException if list has no more elements
      */
@@ -127,7 +127,7 @@ public class MyLinkedList<E> implements Iterable<E> {
 
     /**
      * Removes the last element from the list and return it
-     * 
+     *
      * @return the last element
      * @throws NoSuchElementException if list has no more elements
      */
@@ -159,7 +159,7 @@ public class MyLinkedList<E> implements Iterable<E> {
         size = 0;
         modCount++;
     }
-    
+
     /**
      * Reset the list to an empty state by removing references only
      */
@@ -172,7 +172,7 @@ public class MyLinkedList<E> implements Iterable<E> {
     /**
      * Extend current list in constant time. The method merges the linked lists by
      * linking the list in the argument to the back of the current list.
-     * 
+     *
      * @param other The other list
      */
     public void extend(MyLinkedList<E> other) {
@@ -181,15 +181,15 @@ public class MyLinkedList<E> implements Iterable<E> {
         last = other.last;
         modCount++;
     }
-    
+
     public Object[] toArray() {
         Object[] results = new Object[size];
-        
+
         int i = 0;
         for (Node<E> p = first; p != null; p = p.next) {
             results[i++] = p.item;
         }
-        
+
         return results;
     }
 
@@ -199,7 +199,7 @@ public class MyLinkedList<E> implements Iterable<E> {
 
     /**
      * Same as {@link addLast}
-     * 
+     *
      * @param ele element to be added
      */
     public void push(E ele) {
@@ -208,7 +208,7 @@ public class MyLinkedList<E> implements Iterable<E> {
 
     /**
      * Same as {@link removeLast}
-     * 
+     *
      * @return element removed
      */
     public E pop() {
@@ -221,24 +221,24 @@ public class MyLinkedList<E> implements Iterable<E> {
         if (!iter.hasNext()) {
             return "[]";
         }
-        
+
         StringBuilder s = new StringBuilder();
         s.append('[');
         s.append(iter.next());
-        
+
         while (iter.hasNext()) {
             s.append(',').append(' ');
             s.append(iter.next());
         }
-        
+
         return s.append(']').toString();
-        
+
     }
 
     Node<E> node(int index) {
         checkIndex(index);
         Node<E> cur;
-        
+
         if (index < (size >> 1)) {
             // when index is in the first half
             cur = first;
@@ -251,10 +251,10 @@ public class MyLinkedList<E> implements Iterable<E> {
                 cur = cur.prev;
             }
         }
-        
+
         return cur;
     }
-    
+
     private static class Node<E> {
         E item;
         Node<E> prev;
@@ -268,7 +268,7 @@ public class MyLinkedList<E> implements Iterable<E> {
     }
 
     /**
-     * 
+     *
      */
     class ListItr implements ListIterator<E> {
         private Node<E> lastReturned;
@@ -281,7 +281,7 @@ public class MyLinkedList<E> implements Iterable<E> {
             nextIndex = index;
             next = (index == size)? null : node(index);
         }
-        
+
         @Override
         public boolean hasNext() {
             return nextIndex < size;
@@ -293,7 +293,7 @@ public class MyLinkedList<E> implements Iterable<E> {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-            
+
             lastReturned = next;
             next = next.next;
             nextIndex++;
@@ -314,7 +314,7 @@ public class MyLinkedList<E> implements Iterable<E> {
 
             lastReturned = next = (next == null)? last : next.prev;
             nextIndex--;
-            
+
             return lastReturned.item;
         }
 
@@ -342,7 +342,7 @@ public class MyLinkedList<E> implements Iterable<E> {
         public void add(E e) {
             throw new UnsupportedOperationException();
         }
-        
+
         private void checkForComodification() {
             if (expectedModCount != modCount) {
                 throw new ConcurrentModificationException();
@@ -355,11 +355,11 @@ public class MyLinkedList<E> implements Iterable<E> {
     public Iterator<E> iterator() {
         return new ListItr(0);
     }
-    
+
     public static void main(String[] args) {
         MyLinkedList<Integer> ints = new MyLinkedList<>(Arrays.asList(1, 4, 5, 6, 6, 7));
         MyLinkedList<Integer> ints2 = new MyLinkedList<>(Arrays.asList(6, 7, 8, 9, 10));
-        
+
         System.out.println(ints);
         System.out.println(ints2);
         ints.extend(ints2);
