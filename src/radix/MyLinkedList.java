@@ -45,6 +45,7 @@ public class MyLinkedList<E> implements Iterable<E> {
 
     /**
      * Copy the references to the other LinkedList to this
+     * 
      * @param orig
      */
     public void from(MyLinkedList<E> other) {
@@ -176,9 +177,18 @@ public class MyLinkedList<E> implements Iterable<E> {
      * @param other The other list
      */
     public void extend(MyLinkedList<E> other) {
-        last.next = other.first;
-        size += other.size();
-        last = other.last;
+        if (other.size() == 0) {
+            return;
+        } else if (this.size() == 0) {
+             first = other.first;
+             last = other.last;
+             size = other.size;
+        } else {
+            last.next = other.first;
+            other.first.prev = last;
+            size += other.size();
+            last = other.last;
+        }
         modCount++;
     }
 
@@ -268,7 +278,8 @@ public class MyLinkedList<E> implements Iterable<E> {
     }
 
     /**
-     *
+     * MyLinkedList's general ListIterator. Does not implement the modification
+     * methods.
      */
     class ListItr implements ListIterator<E> {
         private Node<E> lastReturned;
@@ -277,9 +288,9 @@ public class MyLinkedList<E> implements Iterable<E> {
         private int expectedModCount = modCount;
 
         ListItr(int index) {
-            checkIndex(index);
+            if (index != 0) checkIndex(index);
             nextIndex = index;
-            next = (index == size)? null : node(index);
+            next = (index == size) ? null : node(index);
         }
 
         @Override
@@ -312,7 +323,7 @@ public class MyLinkedList<E> implements Iterable<E> {
                 throw new NoSuchElementException();
             }
 
-            lastReturned = next = (next == null)? last : next.prev;
+            lastReturned = next = (next == null) ? last : next.prev;
             nextIndex--;
 
             return lastReturned.item;
@@ -350,11 +361,47 @@ public class MyLinkedList<E> implements Iterable<E> {
         }
 
     }
+    
+    /**
+     * This iterator iterates through the list by removing first element to free up memory.
+     * Do not modify the list while iterating through it.
+     * @author ruosh
+     *
+     */
+    class removeItr implements Iterator<E> {
+        
+        Node<E> next;
+        int index;
+        
+        public removeItr() {
+            next = first;
+        }
+        
+        @Override
+        public boolean hasNext() {
+            return next != null;
+        }
+
+        @Override
+        public E next() {
+            Node<E> cur = next;
+            E val = cur.item;
+            next = next.next;
+            cur.prev = null;
+            cur.item = null;
+            cur.next = null;
+            return val;
+        }
+        
+    }
 
     @Override
     public Iterator<E> iterator() {
         return new ListItr(0);
+//        return new removeItr();
     }
+    
+    
 
     public static void main(String[] args) {
         MyLinkedList<Integer> ints = new MyLinkedList<>(Arrays.asList(1, 4, 5, 6, 6, 7));
