@@ -12,7 +12,7 @@ public class MyHeap {
      * ] <br>
      * - precondition: index is between 0 and size-1 inclusive <br>
      * - precondition: size is between 0 and data.length-1 inclusive.
-     * 
+     *
      * @param data
      * @param size
      * @param index
@@ -66,7 +66,7 @@ public class MyHeap {
      * with the parent node until the parent node is larger or the root is reached.
      * [ should be O(logn) ] <br>
      * - precondition: index is between 0 and data.length-1 inclusive.
-     * 
+     *
      * @param data
      * @param index
      */
@@ -84,7 +84,7 @@ public class MyHeap {
 
     /**
      * convert the array into a valid heap. [ should be O(n) ]
-     * 
+     *
      * @param data
      */
     public static void heapify(int[] data) {
@@ -97,7 +97,7 @@ public class MyHeap {
     /**
      * Sort the array by converting it into a heap then removing the largest value
      * n-1 times. [ should be O(nlogn) ]
-     * 
+     *
      * @param data
      */
     public static void heapsort(int[] data) {
@@ -127,16 +127,48 @@ public class MyHeap {
     private static int indexSecondChild(int i) {
         return i * 2 + 2;
     }
-    
+
     public static void main(String[] args) {
         int[] arr = new int[] {1, 5, 6, 7, 8};
         int[] carr = Arrays.copyOf(arr, 5);
         heapify(carr);
         System.out.println("This should be a heap: " + Arrays.toString(carr));
+        toString(carr);
         heapsort(arr);
         System.out.println(Arrays.toString(arr));
+        toString(arr);
     }
 
+    public static String toString(int[] array) {
+
+    if (array.length == 0) return "";
+    int largest = array[0];
+    for (int j = 1; j < array.length; j++)
+        if (Math.abs(largest) < Math.abs(array[j])) largest = array[j];
+
+    int size = 1;
+    while (size <= array.length) size <<= 1;
+    int buffer = (size>>1)*(int)(Math.log(Math.abs(largest))/Math.log(10)+(largest > 0 ? 1 : 2));
+
+    StringBuilder sb = new StringBuilder();
+
+    int i = 0;
+    for (int row = 2; row <= size; row <<= 1) {
+
+        for (; i < row-1 && i < array.length; i++) {
+            int numlength = array[i] == 0 ? 1 : (int)(Math.log(Math.abs(array[i]))/Math.log(10))+(array[i] > 0 ? 1 : 2);
+            for (int j = numlength; j < buffer; j++) {
+                sb.append(" ");
+            }
+            sb.append(array[i]);
+            for (int j = 0; j < buffer; j++) sb.append(" ");
+        }
+        if (row != size) sb.append("\n");
+        buffer = buffer>>1;
+    }
+
+    return new String(sb);
+}
 }
 
 class IntMaxHeap {
@@ -144,7 +176,7 @@ class IntMaxHeap {
 
     /**
      * Heaplify the array and make a new IntMaxHeap based on given array
-     * 
+     *
      * @param a array value which will comprise the new heap
      */
     public IntMaxHeap(int[] a) {
