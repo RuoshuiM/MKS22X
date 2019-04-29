@@ -1,6 +1,7 @@
 package heap;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MyHeap {
     /**
@@ -20,14 +21,33 @@ public class MyHeap {
         while (index < size) {
             int firstIndex = data[indexFirstChild(index)];
             int secondIndex = data[indexSecondChild(index)];
-            
-            
-            int fc = firstIndex <= size? data[firstIndex] : Integer.MIN_VALUE;
-            int sc = secondIndex <= size? data[secondIndex] : Integer.MIN_VALUE;
-            int cur = data[index];
-            
 
-            if (cur > fc && cur > sc) {
+            if (firstIndex > size) {
+                // first index out of bound, then second index must also be out of bound, so
+                // stop
+                break;
+            }
+
+            // store current value for reference
+            int cur = data[index];
+
+            if (secondIndex > size) {
+                // only compare first
+                int fc = data[firstIndex];
+                if (cur >= fc)
+                    break;
+                else {
+                    aswap(data, index, fc);
+                    // since second index is out, then we know that this must be the bottom of the
+                    // heap, no need to continue
+                    break;
+                }
+            }
+
+            int fc = data[firstIndex];
+            int sc = data[secondIndex];
+
+            if (cur >= fc && cur >= sc) {
                 break;
             } else if (fc > sc) {
                 // first child is larger than second child
@@ -81,7 +101,13 @@ public class MyHeap {
      * @param data
      */
     public static void heapsort(int[] data) {
-
+        heapify(data);
+        int end = data.length - 1;
+        while (end > 0) {
+            aswap(data, 0, end);
+            pushDown(data, end, 0);
+            end--;
+        }
     }
 
     private static void aswap(int[] d, int ai, int bi) {
@@ -102,6 +128,15 @@ public class MyHeap {
         return i * 2 + 2;
     }
     
+    public static void main(String[] args) {
+        int[] arr = new int[] {1, 5, 6, 7, 8};
+        int[] carr = Arrays.copyOf(arr, 5);
+        heapify(carr);
+        System.out.println("This should be a heap: " + Arrays.toString(carr));
+        heapsort(arr);
+        System.out.println(Arrays.toString(arr));
+    }
+
 }
 
 class IntMaxHeap {
