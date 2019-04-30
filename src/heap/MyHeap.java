@@ -129,14 +129,15 @@ public class MyHeap {
     }
 
     public static void main(String[] args) {
-        int[] arr = new int[] {1, 5, 6, 7, 8};
-        int[] carr = Arrays.copyOf(arr, 5);
+        int[] arr = new int[] {1, 5, 6, 7, 8, 8, 5, 54, 100};
+        int[] carr = Arrays.copyOf(arr, arr.length);
         heapify(carr);
         System.out.println("This should be a heap: " + Arrays.toString(carr));
-        toString(carr);
+        System.out.println(toString(carr));
+        System.out.println("Sorting");
         heapsort(arr);
         System.out.println(Arrays.toString(arr));
-        toString(arr);
+        System.out.println(toString(arr));
     }
 
     public static String toString(int[] array) {
